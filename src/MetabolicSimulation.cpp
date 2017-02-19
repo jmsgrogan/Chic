@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -49,14 +49,14 @@ MetabolicSimulation::MetabolicSimulation() : Simulation(),
         mMaxNutrient(40.0),
         mMinNutrient(3.0)
 {
-	mMuscleInputSpatialParameters.push_back("proliferation_rate_factor");
+    mMuscleInputSpatialParameters.push_back("proliferation_rate_factor");
 
-	//mMuscleOutputSpatialParameters.push_back("nutrient");
+    //mMuscleOutputSpatialParameters.push_back("nutrient");
 
-	mFileInputSpatialParameters.push_back("proliferation_rate_factor");
+    mFileInputSpatialParameters.push_back("proliferation_rate_factor");
 
-	mFileOutputSpatialParameters.push_back("proliferation_rate_factor");
-	mFileOutputSpatialParameters.push_back("nutrient");
+    mFileOutputSpatialParameters.push_back("proliferation_rate_factor");
+    mFileOutputSpatialParameters.push_back("nutrient");
 }
 
 MetabolicSimulation::~MetabolicSimulation()
@@ -141,9 +141,9 @@ void MetabolicSimulation::Run()
         {
             end_comms = true;
         }
-//        else
-//        {
-//            end_comms = env::has_next("Nutrient_in");
-//        }
+        else
+        {
+            end_comms = env::has_next("Nutrient_in");
+        }
     }
 }

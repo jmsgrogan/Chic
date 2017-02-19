@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -58,7 +58,8 @@ public:
         double initial_tumour_volume = 144000.0; //mm^3
         double proliferation_rate = 150.0; // mm^3/hr
 
-        std::string output_file = "/home/grogan/test.dat";
+        OutputFileHandler output_file_handler("TestStandaloneCellSimulation", false);
+        std::string output_file = output_file_handler.GetOutputDirectoryFullPath() + "/test.dat";
 
         CellSimulation cell_simulation;
         cell_simulation.SetParameters(proliferation_rate, initial_tumour_volume);
@@ -70,4 +71,4 @@ public:
 
 };
 
-#endif /*TESTVESSELSIMULATION_HPP_*/
+#endif /*TESTCELLSIMULATION_HPP_*/

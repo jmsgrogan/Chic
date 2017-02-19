@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -42,7 +42,6 @@
 #include <vtkDoubleArray.h>
 #include <muscle2/cppmuscle.hpp>
 #include "Exception.hpp"
-#include "Debug.hpp"
 
 #include "Simulation.hpp"
 
@@ -61,10 +60,10 @@ Simulation::Simulation()
       mSolutionVectors(),
       mStandalone(true),
       mNeighbours(),
-	  mFileInputSpatialParameters(),
-	  mFileOutputSpatialParameters(),
-	  mMuscleInputSpatialParameters(),
-	  mMuscleOutputSpatialParameters()
+      mFileInputSpatialParameters(),
+      mFileOutputSpatialParameters(),
+      mMuscleInputSpatialParameters(),
+      mMuscleOutputSpatialParameters()
 {
 
 }
@@ -149,36 +148,34 @@ void Simulation::SetOutputFrequency(unsigned outputFrequency)
 
 vtkSmartPointer<vtkImageData> Simulation::ReadVtk(const std::string& rFilename)
 {
-	MARK;
-	if(rFilename.empty())
-	{
-		EXCEPTION("Input File Name Not Specified.");
-	}
-	else
-	{
-	    vtkSmartPointer<vtkXMLImageDataReader> p_reader = vtkSmartPointer<vtkXMLImageDataReader>::New();
-		p_reader->SetFileName(rFilename.c_str());
-		p_reader->Update();
-		try
-		{
-			return p_reader->GetOutput();
-		}
-		catch(...)
-		{
-			EXCEPTION("Error reading input VTK file.");
-		}
-	}
-	MARK;
+    if(rFilename.empty())
+    {
+        EXCEPTION("Input File Name Not Specified.");
+    }
+    else
+    {
+        vtkSmartPointer<vtkXMLImageDataReader> p_reader = vtkSmartPointer<vtkXMLImageDataReader>::New();
+        p_reader->SetFileName(rFilename.c_str());
+        p_reader->Update();
+        try
+        {
+            return p_reader->GetOutput();
+        }
+        catch(...)
+        {
+            EXCEPTION("Error reading input VTK file.");
+        }
+    }
 }
 
 void Simulation::Send()
 {
-	// Send data with muscles
-	for(unsigned idx=0;idx<mMuscleOutputSpatialParameters.size();idx++)
-	{
-		muscle::env::sendDoubleVector(mMuscleOutputSpatialParameters[idx] + "_out",
-	    		mSolutionVectors[mMuscleOutputSpatialParameters[idx]]);
-	}
+    // Send data with muscle
+    for(unsigned idx=0;idx<mMuscleOutputSpatialParameters.size();idx++)
+    {
+        muscle::env::sendDoubleVector(mMuscleOutputSpatialParameters[idx] + "_out",
+                mSolutionVectors[mMuscleOutputSpatialParameters[idx]]);
+    }
 }
 
 void Simulation::Receive()
@@ -187,25 +184,23 @@ void Simulation::Receive()
     unsigned num_points = mGridSize[0] * mGridSize[1] *mGridSize[2];
     for(unsigned idx=0; idx<mMuscleInputSpatialParameters.size(); idx++)
     {
-    	std::vector<double> incoming_vector = muscle::env::receiveDoubleVector(mMuscleInputSpatialParameters[idx] + "_in");
-    	if(incoming_vector.size() != num_points)
-    	{
-    		EXCEPTION("Number of points in incoming vector does not match number of points in grid");
-    	}
-    	mSolutionVectors[mMuscleInputSpatialParameters[idx]]=incoming_vector;
+        std::vector<double> incoming_vector = muscle::env::receiveDoubleVector(mMuscleInputSpatialParameters[idx] + "_in");
+        if(incoming_vector.size() != num_points)
+        {
+            EXCEPTION("Number of points in incoming vector does not match number of points in grid");
+        }
+        mSolutionVectors[mMuscleInputSpatialParameters[idx]]=incoming_vector;
     }
 }
 
 void Simulation::Initialize()
 {
-	MARK;
-    vtkSmartPointer<vtkImageData> p_input_data = vtkSmartPointer<vtkImageData>::New();
+    vtkSmartPointer<vtkImageData> p_input_data;
     if(mStandalone)
     {
         // Read any spatial input data from file
-    	p_input_data = ReadVtk(mInputFile);
+        p_input_data = ReadVtk(mInputFile);
 
-    	MARK;
         // Set up the grid
         for(unsigned idx=0;idx<3;idx++)
         {
@@ -215,14 +210,12 @@ void Simulation::Initialize()
         mGridSpacing = p_input_data->GetSpacing()[0];
     }
 
-	MARK;
     // Set up the vtk solution data
     mpVtkSolution = vtkSmartPointer<vtkImageData>::New();
     mpVtkSolution->SetOrigin(mGridOrigin[0], mGridOrigin[1], mGridOrigin[2]);
     mpVtkSolution->SetSpacing(mGridSpacing, mGridSpacing, mGridSpacing);
     mpVtkSolution->SetDimensions(mGridSize[0], mGridSize[1], mGridSize[2]);
 
-	MARK;
     // Populate the solution vectors
     unsigned num_points = mGridSize[0] * mGridSize[1] *mGridSize[2];
     for(unsigned idx=0; idx < mFileOutputSpatialParameters.size(); idx++)
@@ -235,32 +228,29 @@ void Simulation::Initialize()
         mSolutionVectors[mFileOutputSpatialParameters[idx]] = std::vector<double>(num_points, 0.0);
     }
 
-	MARK;
     if(mStandalone)
     {
-    	// Set all required data based on VTK file values
+        // Set all required data based on VTK file values
         for(unsigned idx=0; idx<mFileInputSpatialParameters.size(); idx++)
         {
             if(p_input_data->GetPointData()->HasArray(mFileInputSpatialParameters[idx].c_str()))
             {
-            	std::vector<double> point_values(num_points);
-            	vtkSmartPointer<vtkDataArray> p_point_data =
-            			p_input_data->GetPointData()->GetArray(mFileInputSpatialParameters[idx].c_str());
+                std::vector<double> point_values(num_points);
+                vtkSmartPointer<vtkDataArray> p_point_data =
+                        p_input_data->GetPointData()->GetArray(mFileInputSpatialParameters[idx].c_str());
                 for(unsigned jdx=0; jdx<num_points; jdx++)
                 {
-                	point_values[jdx] = p_point_data->GetTuple1(jdx);
+                    point_values[jdx] = p_point_data->GetTuple1(jdx);
                 }
                 mSolutionVectors[mFileInputSpatialParameters[idx]] = point_values;
             }
             else
             {
-            	EXCEPTION("Required Input Data Array: " +
-            			mFileInputSpatialParameters[idx] +
-						"Missing From Input File");
+                std::vector<double> point_values(num_points, 0.0);
+                mSolutionVectors[mFileInputSpatialParameters[idx]] = point_values;
             }
         }
     }
-	MARK;
 }
 
 void Simulation::SetIsStandalone(bool standalone)
@@ -268,32 +258,27 @@ void Simulation::SetIsStandalone(bool standalone)
     mStandalone = standalone;
 }
 
-void Simulation::Run()
-{
-
-}
-
 void Simulation::WriteVtk(const std::string& rFilename)
 {
-	if(rFilename.empty())
-	{
-		EXCEPTION("Output filename is empty");
-	}
+    if(rFilename.empty())
+    {
+        EXCEPTION("Output filename is empty");
+    }
 
-	double num_grid_points = mGridSize[0]*mGridSize[1]*mGridSize[2];
+    double num_grid_points = mGridSize[0]*mGridSize[1]*mGridSize[2];
 
     // Update the vtk solution
     for(unsigned idx=0; idx< mFileOutputSpatialParameters.size(); idx++)
     {
-    	if(mSolutionVectors[mFileOutputSpatialParameters[idx]].size()!= num_grid_points)
-    	{
-    		EXCEPTION("Number of grid points differs from the size of the solution vector");
-    	}
+        if(mSolutionVectors[mFileOutputSpatialParameters[idx]].size()!= num_grid_points)
+        {
+            EXCEPTION("Number of grid points differs from the size of the solution vector");
+        }
 
-    	if(mpVtkSolution->GetPointData()->GetArray(mFileOutputSpatialParameters[idx].c_str())->GetNumberOfTuples()!=num_grid_points)
-    	{
-    		EXCEPTION("Number of grid points differs from the size of the vtk solution vector");
-    	}
+        if(mpVtkSolution->GetPointData()->GetArray(mFileOutputSpatialParameters[idx].c_str())->GetNumberOfTuples()!=num_grid_points)
+        {
+            EXCEPTION("Number of grid points differs from the size of the vtk solution vector");
+        }
 
         for(unsigned jdx=0; jdx<num_grid_points; jdx++)
         {
@@ -307,13 +292,13 @@ void Simulation::WriteVtk(const std::string& rFilename)
     p_image_data_writer->SetInputData(mpVtkSolution);
     p_image_data_writer->Update();
 
-	try
-	{
-	    p_image_data_writer->Write();
-	}
-	catch(...)
-	{
-		EXCEPTION("Error writing to VTK file.");
-	}
+    try
+    {
+        p_image_data_writer->Write();
+    }
+    catch(...)
+    {
+        EXCEPTION("Error writing to VTK file.");
+    }
 }
 

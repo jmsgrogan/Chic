@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -41,6 +41,7 @@
 #include "VesselSimulation.hpp"
 #include "FileFinder.hpp"
 #include "OutputFileHandler.hpp"
+
 #include "PetscSetupAndFinalize.hpp"
 
 class TestVesselSimulation : public CxxTest::TestSuite
@@ -48,12 +49,13 @@ class TestVesselSimulation : public CxxTest::TestSuite
 
 public:
 
-    void DontTestStandaloneVesselSimulation2d()
+    void TestStandaloneVesselSimulation2d()
     {
         // Create a new simulation
         VesselSimulation simulation;
 
-        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_2d.vti", RelativeTo::ChasteSourceRoot);
+        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_2d.vti",
+                RelativeTo::ChasteSourceRoot);
         simulation.SetInputFile(file_finder.GetAbsolutePath());
 
         OutputFileHandler output_file_handler("TestStandaloneVesselSimulation", false);
@@ -69,14 +71,15 @@ public:
 
     void TestStandaloneVesselSimulation3d()
     {
+        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_3d.vti",
+                RelativeTo::ChasteSourceRoot);
+        OutputFileHandler output_file_handler("TestStandaloneVesselSimulation", false);
+
         // Create a new simulation
         VesselSimulation simulation;
-
-        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_3d.vti", RelativeTo::ChasteSourceRoot);
         simulation.SetInputFile(file_finder.GetAbsolutePath());
-
-        OutputFileHandler output_file_handler("TestStandaloneVesselSimulation", false);
-        simulation.SetOutputFile(output_file_handler.GetOutputDirectoryFullPath() + "/vessel_sim_output_3d");
+        simulation.SetOutputFile(output_file_handler.GetOutputDirectoryFullPath() +
+                "/vessel_sim_output_3d");
         simulation.SetMaxIncrements(3);
         simulation.SetEndTime(3);
         simulation.SetTargetTimeIncrement(1);
@@ -86,18 +89,19 @@ public:
         simulation.Run();
     }
 
-    void TestStandaloneVesselSimulation()
+    void XTestStandaloneVesselSimulation()
     {
         // Create a new simulation
         VesselSimulation simulation;
 
-        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_full.vti", RelativeTo::ChasteSourceRoot);
+        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_full.vti",
+                RelativeTo::ChasteSourceRoot);
         simulation.SetInputFile(file_finder.GetAbsolutePath());
 
         OutputFileHandler output_file_handler("TestStandaloneVesselSimulation", false);
         simulation.SetOutputFile(output_file_handler.GetOutputDirectoryFullPath() + "/vessel_sim_output_full");
-        simulation.SetMaxIncrements(20);
-        simulation.SetEndTime(20);
+        simulation.SetMaxIncrements(3);
+        simulation.SetEndTime(3);
         simulation.SetTargetTimeIncrement(1);
         simulation.SetOutputFrequency(1);
 

@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -46,7 +46,8 @@
 #include "UblasVectorInclude.hpp"
 
 /**
- * Base simulation class with common functionality for vessel and cell simulation components.
+ * Base simulation class with common functionality for vessel and
+ * cell simulation components.
  */
 class Simulation
 {
@@ -114,7 +115,7 @@ protected:
     std::map<std::string, std::vector<double> > mSolutionVectors;
 
 	/**
-	 * Should be run in standalone mode, or with MUSCLES
+	 * Should be run in standalone mode, or with Muscle
 	 */
     bool mStandalone;
 
@@ -129,7 +130,7 @@ protected:
     std::vector<std::string> mFileInputSpatialParameters;
 
     /**
-     * Parameters to be output to files
+     * Parameters to be output to file
      */
     std::vector<std::string> mFileOutputSpatialParameters;
 
@@ -158,7 +159,7 @@ public:
     /**
      * Run the model
      */
-    virtual void Run();
+    virtual void Run()=0;
 
     /**
      * Set the names of spatial parameters to be read from file

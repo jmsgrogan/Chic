@@ -3,6 +3,8 @@
 	<name>Chic</name>
 	<comment></comment>
 	<projects>
+		<project>Chaste</project>
+		<project>MicrovesselChaste</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

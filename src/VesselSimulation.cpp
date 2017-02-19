@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -67,30 +67,30 @@ VesselSimulation::VesselSimulation() : Simulation(),
         mRateOfVesselRegression(0.01),
         mVesselGrowthTimstep(1.0)
 {
-	  // Set default parameter array names
-      mFileInputSpatialParameters.push_back("proliferating");
-      mFileInputSpatialParameters.push_back("quiescent");
-      mFileInputSpatialParameters.push_back("apoptotic");
-      mFileInputSpatialParameters.push_back("necrotic");
-      mFileInputSpatialParameters.push_back("differentiated");
-      mFileInputSpatialParameters.push_back("tumour");
+      // Set default parameter array names
+      this->mFileInputSpatialParameters.push_back("proliferating");
+      this->mFileInputSpatialParameters.push_back("quiescent");
+      this->mFileInputSpatialParameters.push_back("apoptotic");
+      this->mFileInputSpatialParameters.push_back("necrotic");
+      this->mFileInputSpatialParameters.push_back("differentiated");
+      this->mFileInputSpatialParameters.push_back("tumour");
 
-	  mFileOutputSpatialParameters.push_back("proliferating");
-	  mFileOutputSpatialParameters.push_back("quiescent");
-	  mFileOutputSpatialParameters.push_back("differentiated");
-	  mFileOutputSpatialParameters.push_back("apoptotic");
-	  mFileOutputSpatialParameters.push_back("necrotic");
-	  mFileOutputSpatialParameters.push_back("tumour");
-	  mFileOutputSpatialParameters.push_back("vessel");
-	  mFileOutputSpatialParameters.push_back("stimulus");
-	  mFileOutputSpatialParameters.push_back("nutrient");
+      this->mFileOutputSpatialParameters.push_back("proliferating");
+      this->mFileOutputSpatialParameters.push_back("quiescent");
+      this->mFileOutputSpatialParameters.push_back("differentiated");
+      this->mFileOutputSpatialParameters.push_back("apoptotic");
+      this->mFileOutputSpatialParameters.push_back("necrotic");
+      this->mFileOutputSpatialParameters.push_back("tumour");
+      this->mFileOutputSpatialParameters.push_back("vessel");
+      this->mFileOutputSpatialParameters.push_back("stimulus");
+      this->mFileOutputSpatialParameters.push_back("nutrient");
 
-	  mMuscleInputSpatialParameters.push_back("proliferating");
-	  mMuscleInputSpatialParameters.push_back("quiescent");
-	  mMuscleInputSpatialParameters.push_back("apoptotic");
-	  mMuscleInputSpatialParameters.push_back("necrotic");
-	  mMuscleInputSpatialParameters.push_back("differentiated");
-	  mMuscleInputSpatialParameters.push_back("tumour");
+      this->mMuscleInputSpatialParameters.push_back("proliferating");
+      this->mMuscleInputSpatialParameters.push_back("quiescent");
+      this->mMuscleInputSpatialParameters.push_back("apoptotic");
+      this->mMuscleInputSpatialParameters.push_back("necrotic");
+      this->mMuscleInputSpatialParameters.push_back("differentiated");
+      this->mMuscleInputSpatialParameters.push_back("tumour");
 
 	  //mMuscleOutputSpatialParameters.push_back("nutrient");
 }
@@ -135,24 +135,24 @@ void VesselSimulation::SetParameters(double initialVolumeFraction,
 void VesselSimulation::Initialize()
 {
     // Do the base class initialization
-	Simulation::Initialize();
+    Simulation::Initialize();
 
-	unsigned num_points = mGridSize[0] * mGridSize[1] *mGridSize[2];
+    unsigned num_points = mGridSize[0] * mGridSize[1] * mGridSize[2];
 
-	// Over-ride to set initial vessel volume fraction
-	for(unsigned jdx = 0; jdx<num_points; jdx++)
-	{
-		mSolutionVectors["vessel"][jdx] = mInitialVolumeFraction;
-	}
+    // Over-ride to set initial vessel volume fraction
+    for (unsigned jdx = 0; jdx < num_points; jdx++)
+    {
+        this->mSolutionVectors["vessel"][jdx] = mInitialVolumeFraction;
+    }
 }
 
 void VesselSimulation::Send()
 {
-	// Send the nutrient solution with muscle
-	Simulation::Send();
+    // Send the nutrient solution with muscle
+    Simulation::Send();
 
-	// Special case for nutrients
-    muscle::env::sendDoubleVector("Nutrient_out", mSolutionVectors["nutrient"]);
+    // Special case for nutrients
+    muscle::env::sendDoubleVector("Nutrient_out", this->mSolutionVectors["nutrient"]);
 }
 
 void VesselSimulation::UpdateFields(unsigned speciesIndex)
@@ -185,14 +185,18 @@ void VesselSimulation::UpdateFields(unsigned speciesIndex)
 
                 if(speciesIndex == 0)
                 {
-                    linear_system.AddToMatrixElement(grid_index, grid_index, -mStimulusDecayRate - 6.0 * diff_term);
+                    linear_system.AddToMatrixElement(grid_index, grid_index,
+                            -mStimulusDecayRate - 6.0 * diff_term);
                 }
                 else
                 {
-                    double cell_numbers = mSolutionVectors["proliferating"][grid_index] + mSolutionVectors["quiescent"][grid_index] +
+                    double cell_numbers = mSolutionVectors["proliferating"][grid_index] +
+                            mSolutionVectors["quiescent"][grid_index] +
                             mSolutionVectors["differentiated"][grid_index];
-                    double linear_term = -(mSolutionVectors["vessel"][grid_index] + mNutrientConsumptionRate * (cell_numbers));
-                    linear_system.AddToMatrixElement(grid_index, grid_index, linear_term - 6.0 * diff_term);
+                    double linear_term = -(mSolutionVectors["vessel"][grid_index] +
+                            mNutrientConsumptionRate * (cell_numbers));
+                    linear_system.AddToMatrixElement(grid_index, grid_index,
+                            linear_term - 6.0 * diff_term);
                 }
 
                 // Apply boundary conditions
@@ -284,7 +288,7 @@ void VesselSimulation::UpdateFields(unsigned speciesIndex)
         if(mSolutionVectors["proliferating"][row] +
                 mSolutionVectors["quiescent"][row] +
                 mSolutionVectors["apoptotic"][row] +
-				mSolutionVectors["differentiated"][row]<   1.e-3)
+                mSolutionVectors["differentiated"][row]<   1.e-3)
         {
             bc_indices.push_back(row);
             if(speciesIndex == 0)
@@ -348,7 +352,7 @@ void VesselSimulation::Run()
         // Update the vessel volume fractions
         for(unsigned jdx = 0; jdx<num_points; jdx++)
         {
-            double growth_stimulus =  mSolutionVectors["stimulus"][jdx];
+            double growth_stimulus =  this->mSolutionVectors["stimulus"][jdx];
             if(growth_stimulus > 0.5)
             {
                 r0 = mRateOfVesselGrowth*mSolutionVectors["nutrient"][jdx];
@@ -376,8 +380,8 @@ void VesselSimulation::Run()
         // Write the output at the specified frequency
         if(idx % mOutputFrequency == 0 && mStandalone)
         {
-			std::string output_file = mOutputFile + "_vessel_t_" + boost::lexical_cast<std::string>(mCurrentTime)+".vti";
-			WriteVtk(output_file);
+            std::string output_file = mOutputFile + "_vessel_t_" + boost::lexical_cast<std::string>(mCurrentTime)+".vti";
+            WriteVtk(output_file);
         }
 
         if(!mStandalone)

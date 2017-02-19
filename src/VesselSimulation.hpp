@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -39,7 +39,8 @@
 #include "Simulation.hpp"
 
 /**
- * Vessel component for Chic Updates nutrient and growth factor fields and vessel volume fraction.
+ * Vessel component for Chic Updates nutrient and growth factor fields and
+ * vessel volume fraction.
  */
 class VesselSimulation : public Simulation
 {
@@ -54,7 +55,7 @@ class VesselSimulation : public Simulation
     double mNutrientDiffusivity;
 
     /**
-     * Stimuluss diffusion coefficient
+     * Stimulus diffusion coefficient
      */
     double mStimulusDiffusivity;
 

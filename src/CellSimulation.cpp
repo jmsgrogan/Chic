@@ -1,6 +1,6 @@
 /*
 
- Copyright (c) 2005-2015, University of Oxford.
+ Copyright (c) 2005-2017, University of Oxford.
  All rights reserved.
 
  University of Oxford means the Chancellor, Masters and Scholars of the
@@ -55,26 +55,26 @@ CellSimulation::CellSimulation() : Simulation(),
         mCurrentVolume(100000.0),
         mCentre(zero_vector<double>(3))
 {
-	mFileInputSpatialParameters.push_back("proliferation_rate_factor");
+    mFileInputSpatialParameters.push_back("proliferation_rate_factor");
 
-	mFileOutputSpatialParameters.push_back("proliferating");
-	mFileOutputSpatialParameters.push_back("quiescent");
-	mFileOutputSpatialParameters.push_back("differentiated");
-	mFileOutputSpatialParameters.push_back("apoptotic");
-	mFileOutputSpatialParameters.push_back("necrotic");
-	mFileOutputSpatialParameters.push_back("tumour");
-	mFileOutputSpatialParameters.push_back("nutrient");
-	mFileOutputSpatialParameters.push_back("proliferation_rate_factor");
+    mFileOutputSpatialParameters.push_back("proliferating");
+    mFileOutputSpatialParameters.push_back("quiescent");
+    mFileOutputSpatialParameters.push_back("differentiated");
+    mFileOutputSpatialParameters.push_back("apoptotic");
+    mFileOutputSpatialParameters.push_back("necrotic");
+    mFileOutputSpatialParameters.push_back("tumour");
+    mFileOutputSpatialParameters.push_back("nutrient");
+    mFileOutputSpatialParameters.push_back("proliferation_rate_factor");
 
-	mMuscleInputSpatialParameters.push_back("proliferation_rate_factor");
+    mMuscleInputSpatialParameters.push_back("proliferation_rate_factor");
 
-	mMuscleOutputSpatialParameters.push_back("proliferating");
-	mMuscleOutputSpatialParameters.push_back("differentiated");
-	mMuscleOutputSpatialParameters.push_back("quiescent");
-	mMuscleOutputSpatialParameters.push_back("apoptotic");
-	mMuscleOutputSpatialParameters.push_back("necrotic");
-	mMuscleOutputSpatialParameters.push_back("proliferating");
-	mMuscleOutputSpatialParameters.push_back("tumour");
+    mMuscleOutputSpatialParameters.push_back("proliferating");
+    mMuscleOutputSpatialParameters.push_back("differentiated");
+    mMuscleOutputSpatialParameters.push_back("quiescent");
+    mMuscleOutputSpatialParameters.push_back("apoptotic");
+    mMuscleOutputSpatialParameters.push_back("necrotic");
+    mMuscleOutputSpatialParameters.push_back("proliferating");
+    mMuscleOutputSpatialParameters.push_back("tumour");
 }
 
 CellSimulation::~CellSimulation()
@@ -91,12 +91,10 @@ void CellSimulation::SetParameters(double proliferationRate, double initialVolum
 
 void CellSimulation::Initialize()
 {
-	MARK;
-	Simulation::Initialize();
-	MARK;
+    Simulation::Initialize();
 
     // Set up the initial cell populations
-	unsigned num_points = mGridSize[0] * mGridSize[1] *mGridSize[2];
+    unsigned num_points = mGridSize[0] * mGridSize[1] *mGridSize[2];
     for(unsigned idx=0; idx<mGridSize[2]; idx++)
     {
         for(unsigned jdx=0; jdx<mGridSize[1]; jdx++)
@@ -142,17 +140,17 @@ void CellSimulation::Initialize()
 void CellSimulation::Run()
 {
     // Simulation main loop
-	MARK;
+    MARK;
     Initialize();
-	MARK;
     if(this->mOutputFile.empty())
     {
         EXCEPTION("Output file name required.");
     }
+    MARK;
     std::ofstream output_file((this->mOutputFile + "_t_"+boost::lexical_cast<std::string>(mCurrentTime)+ ".dat").c_str());
     output_file << "time, volume \n";
 
-	MARK;
+    MARK;
     // Update the tumour radius
     unsigned counter = 0;
     while(counter <= this->mMaxIncrements)
@@ -215,14 +213,12 @@ void CellSimulation::Run()
                 EXCEPTION("Output file not specified.");
             }
         }
-
         if(!mStandalone)
         {
             Send();
         }
-
         counter ++;
     }
-	MARK;
+    MARK;
     output_file.close();
 }
