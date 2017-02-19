@@ -169,6 +169,7 @@ private:
 
     /**
      * Update the solution fields
+	*
      * @param speciesIndex the index of the species to be updated
      */
     void UpdateFields(unsigned speciesIndex = 0);

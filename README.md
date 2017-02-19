@@ -108,3 +108,44 @@ The cell standalone takes a vtk image data file with and array 'Tumour' and valu
 The vessel standalone takes a vtk image data file with arrays `P`, `Q`, `N` and outputs the original arrays, along with 'Nutrient'. It uses the vtk image data to define gird size, spacing and locaiton.
 
 For the coupled versions both components read grid size, spacing and location from the muscle config file. The cell component passes vector doubles of `P`, `Q`, `N` to the vessel component and receives the vector double `Nutrient`. The vessel component does not have any written  output in this case. `Nutrient` is written out by the cell component.
+
+## Building Distributables (Developer Only)
+
+### Download and Install Static Boost
+```bash
+wget http://downloads.sourceforge.net/project/boost/boost/1.54.0/boost_1_54_0.tar.gz
+tar -xvf boost_1_54_0.tar.gz
+mv boost_1_54_0 Boost
+rm boost_1_54_0.tar.gz
+mkdir Boost-Install
+cd Boost
+./bootstrap.sh --prefix=$WORK_DIR/Boost-Install --with-libraries=system,filesystem,serialization,program_options
+./b2 install link=static
+```
+
+### Download and Install Static VTK
+```bash
+git clone git://vtk.org/VTK.git VTK
+cd VTK
+git checkout tags/v5.10.1
+cd ..
+mkdir VTK-Build
+cd VTK-Build
+ccmake ../VTK
+```
+Turn off shared libs and set to release build. Line below sets legacy GLX.
+
+```bash
+cmake -DCMAKE_C_FLAGS=-DGLX_GLXEXT_LEGACY -DCMAKE_CXX_FLAGS=-DGLX_GLXEXT_LEGACY -Wno-dev ../VTK
+make
+make install
+```
+
+### Download and Intall Static PETSc
+
+```bash
+./config/configure.py --download-f2cblaslapack --download-mpich --download-hdf5 --download-parmetis --download-metis --with-x=false --with-clanguage=cxx --with-gnu-compilers --with-debugging=0 --with-shared-libraries=0  --with-ssl=0 --with-pthread=0
+make PETSC_DIR=$PETSC_DIR PETSC_ARCH=$PETSCH_ARCH all
+```
+
+### Build Static Exectables
