@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<VTKFile type="ImageData" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <ImageData WholeExtent="0 49 0 49 0 2" Origin="0 0 0" Spacing="2 2 2">
+    <Piece Extent="0 49 0 49 0 2">
+      <PointData>
+        <DataArray type="Float64" Name="tumour_mask" format="appended" RangeMin="0"                    RangeMax="1"                    offset="0"                   />
+      </PointData>
+      <CellData>
+      </CellData>
+    </Piece>
+  </ImageData>
+  <AppendedData encoding="base64">
+   _AgAAAACAAABgagAAngAAAGUAAAA=eJzt3LENgDAQBEE6o/9uKIHAInjpAxCgM2ImcWrdxvayAAAAAAAAAMBd25q+wT8cOz99cs5b++tzTaqDLlV6f12q9O56DOm9deml99ahSu+uRy+9vw49HeZm/2+yMwAAAAAAAAAAAAAAAAAA8DTvz7P8zzCH9L8lugzp/XWp0rvrUaV316NK765Hld5dj156fx16OszN/rxjBwXbsUJ4nO3RsQ3AIBRDQTZj/20yQuovoRQEYiLdNe79WgMAAAAAAAAAAAAAAAAAAP7p6muWOav+1+edrzro8izVQZcq/b8uVfp3Par073qMpf/XYUyHM+lwNv8DAAAAAAAAsMcNcvrDTA==
+  </AppendedData>
+</VTKFile>
