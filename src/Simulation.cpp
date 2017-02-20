@@ -289,8 +289,8 @@ void Simulation::WriteVtk(const std::string& rFilename)
 
     vtkSmartPointer<vtkXMLImageDataWriter> p_image_data_writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
     p_image_data_writer->SetFileName(rFilename.c_str());
-    //p_image_data_writer->SetInputData(mpVtkSolution);
-    p_image_data_writer->SetInput(mpVtkSolution);
+    p_image_data_writer->SetInputData(mpVtkSolution);
+    //p_image_data_writer->SetInput(mpVtkSolution);
     p_image_data_writer->Update();
 
     try

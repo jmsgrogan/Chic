@@ -49,7 +49,7 @@ class TestVesselSimulation : public CxxTest::TestSuite
 
 public:
 
-    void TestStandaloneVesselSimulation2d()
+    void xTestStandaloneVesselSimulation2d()
     {
         // Create a new simulation
         VesselSimulation simulation;
@@ -71,17 +71,18 @@ public:
 
     void TestStandaloneVesselSimulation3d()
     {
-        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_3d.vti",
-                RelativeTo::ChasteSourceRoot);
+//        FileFinder file_finder("projects/Chic/apps/src/data/clinical_image_3d.vti",
+//                RelativeTo::ChasteSourceRoot);
         OutputFileHandler output_file_handler("TestStandaloneVesselSimulation", false);
 
         // Create a new simulation
         VesselSimulation simulation;
-        simulation.SetInputFile(file_finder.GetAbsolutePath());
+        //simulation.SetInputFile(file_finder.GetAbsolutePath());
+        simulation.SetInputFile("/home/grogan/rad_100.vti");
         simulation.SetOutputFile(output_file_handler.GetOutputDirectoryFullPath() +
                 "/vessel_sim_output_3d");
-        simulation.SetMaxIncrements(3);
-        simulation.SetEndTime(3);
+        simulation.SetMaxIncrements(1);
+        simulation.SetEndTime(1);
         simulation.SetTargetTimeIncrement(1);
         simulation.SetOutputFrequency(1);
 

@@ -1,12 +1,11 @@
 # CHIC Hypermodel Collection
-This is a collection of instructions for building 'Hypomodels' with Chaste for use in the Computational Horizons in Cancer [Chic](http://chic-vph.eu/) project. 
+This is a collection of instructions for building 'Hypomodels' with Chaste for use in the [Computational Horizons in Cancer - Chic](http://chic-vph.eu/) project. 
 
 ## Repo Overview
 
 * `src`: source code directory, containing the simulation base class, cell and vessel simulations and ode models governing cell and vessel growth.
 * `test`: test directory, tests for the ode models and standalone simulations.
-* `test/data` input files for tests. clinical_image is an artifical vtk file with a binary mask of a tumour, it is the input for the cell component. 
-vessel_standalone_image is a vtk file with cell populations. It is the input for the vessel standalone component.
+* `test/data` input files for tests. clinical_image is an artifical vtk file with a binary mask of a tumour, it is the input for the cell component. vessel_standalone_image is a vtk file with cell populations. It is the input for the vessel standalone component.
 * `python-d6_2`: old python code for the 6_2 deliverable
 * `apps/src`: the main files for the binaries and the input file for the muscle co-execution.
 
@@ -45,6 +44,8 @@ source $WORK_DIR/Muscle-Build/etc/muscle.profile
 export LD_LIBRARY_PATH=$WORK_DIR/Muscle-Build/lib:$LD_LIBRARY_PATH
 export PATH=$WORK_DIR/Muscle-Build/bin/:$PATH
 ```
+
+to `~/.bashrc`
 
 ### Build Sample Hypermodels
 
@@ -103,15 +104,17 @@ ctest -L project_Chic -j $NUM_CPUS
 
 ## Input and Output
 
-The cell standalone takes a vtk image data file with and array 'Tumour' and values 1 in tumour regions and 0 in non-tumour regions. It takes grid size, spacing and origin via the muscel config file. It outputs vtk image data files containing arrays `'P`, `Q`, `A`, `N` corresponding to cell populations at specified intervals. 
+The cell standalone takes a vtk image data file with and array 'tumour' and values 1 in tumour regions and 0 in non-tumour regions. It takes grid size, spacing and origin via the muscel config file. It outputs vtk image data files containing arrays `'P`, `Q`, `A`, `N` corresponding to cell populations at specified intervals. 
 
 The vessel standalone takes a vtk image data file with arrays `P`, `Q`, `N` and outputs the original arrays, along with 'Nutrient'. It uses the vtk image data to define gird size, spacing and locaiton.
 
 For the coupled versions both components read grid size, spacing and location from the muscle config file. The cell component passes vector doubles of `P`, `Q`, `N` to the vessel component and receives the vector double `Nutrient`. The vessel component does not have any written  output in this case. `Nutrient` is written out by the cell component.
 
 ## Building Distributables (Developer Only)
+The current development version of Muscle should be used while an old a GCC version as you are
+supporting should be used for the build. The Muscle library and usual GCC related libraries will still be dynamically linked.
 
-### Download and Install Static Boost
+### Download and Build Static Boost
 ```bash
 wget http://downloads.sourceforge.net/project/boost/boost/1.54.0/boost_1_54_0.tar.gz
 tar -xvf boost_1_54_0.tar.gz
@@ -123,7 +126,7 @@ cd Boost
 ./b2 install link=static
 ```
 
-### Download and Install Static VTK
+### Download and Build Static VTK
 ```bash
 git clone git://vtk.org/VTK.git VTK
 cd VTK
@@ -141,11 +144,30 @@ make
 make install
 ```
 
-### Download and Intall Static PETSc
+### Download and Build Static PETSc
 
 ```bash
+wget http://ftp.mcs.anl.gov/pub/petsc/release-snapshots/petsc-lite-3.7.5.tar.gz
+mv petsc-3.7.5 PETSc
+export PETSC_DIR=$PWD/PETSc
+export PETSC_ARCH=linux-gnu-opt
 ./config/configure.py --download-f2cblaslapack --download-mpich --download-hdf5 --download-parmetis --download-metis --with-x=false --with-clanguage=cxx --with-gnu-compilers --with-debugging=0 --with-shared-libraries=0  --with-ssl=0 --with-pthread=0
 make PETSC_DIR=$PETSC_DIR PETSC_ARCH=$PETSCH_ARCH all
 ```
 
 ### Build Static Exectables
+
+```bash
+cd $WORK_DIR
+mkdir Chaste_Build
+cd Chaste_Build
+ccmake ../Chaste -DMUSCLE_DIR=$WORK_DIR
+```
+
+point to static rather than system versions for Boost, VTK, PETSc. Turn on static Chaste build.
+
+```bash
+make project_Chic -j $NUM_CPUS
+```
+
+The binaries in `$WORK_DIR/Chaste_Build/projects/Chic/apps/src` will now be statically linked, except for the Muscle library and the usual GCC related libraries. 
