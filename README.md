@@ -76,12 +76,12 @@ cd $WORK_DIR/Chaste_Build/projects/Chic/apps/src
 
 ## Running Hypermodels with Muscle
 
-Open `$WORK_DIR/Chic/apps/src/chic_cell_vessel.cxa.rb' and change lines 4 and 5 to reflect where your
-input file (`input_file') is and where you would like your output files to
-be placed (`output_file'). For example, you could use something like:
+Open `$WORK_DIR/Chic/apps/src/chic_cell_vessel.cxa.rb` and change lines 4 and 5 to reflect where your
+input file ('input_file') is and where you would like your output files to
+be placed ('output_file'). For example, you could use something like:
 
 ```bash
-$env['input_file'] = `$WORK_DIR/Chic/apps/src/data/clinical_image_3d.vti'
+$env['input_file'] = '$WORK_DIR/Chic/apps/src/data/clinical_image_3d.vti'
 $env['output_file'] = '$WORK_DIR/TestOutput/hypermodel_output_3d'
 ```
 
